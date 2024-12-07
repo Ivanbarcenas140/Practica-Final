@@ -23,7 +23,7 @@ public class NotionRepository implements IRepository{
     }
 
     @Override
-    public ArrayList<Task> exportTask(ArrayList<Task> Tasks) {
+    public ArrayList<Task> getAllTask() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'exportTask'");
     }

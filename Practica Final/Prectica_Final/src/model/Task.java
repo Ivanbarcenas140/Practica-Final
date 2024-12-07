@@ -27,20 +27,24 @@ public class Task implements Serializable{
         }
  
         try{
-             int identifier = Integer.parseInt(chunks[0]);
-             String title = chunks[1];
-             String date = chunks[2];
-             String content = chunks[3];
-             int priority = Integer.parseInt(chunks[4]);
-             int estimatedDuration = Integer.parseInt(chunks[5]);
-             boolean completed =  Boolean.parseBoolean(chunks[6]);
-             Task t = new Task(identifier, priority, estimatedDuration, title, content, date, completed);
-             return t;
+            int identifier = Integer.parseInt(chunks[0]);
+            String title = chunks[1];
+            String date = chunks[2];
+            String content = chunks[3];
+            int priority = Integer.parseInt(chunks[4]);
+            int estimatedDuration = Integer.parseInt(chunks[5]);
+            boolean completed =  Boolean.parseBoolean(chunks[6]);
+            Task t = new Task(identifier, priority, estimatedDuration, title, content, date, completed);
+            return t;
         }catch(Exception e){
          //rellenar
          return null;
         }
-     }
+    }
+
+    public String getInstanceAsDelimitedString(String delimitador) {
+        return String.format(Locale.ENGLISH, "%d"+delimitador+"%s"+delimitador+"%s"+delimitador+"%s"+delimitador+"%d"+delimitador+"%d"+delimitador+"%b",identifier,title,date,content,priority,estimatedDuration,completed);
+    }
  
     
 
@@ -65,6 +69,11 @@ public class Task implements Serializable{
         if (identifier != other.identifier)
             return false;
         return true;
+    }
+
+    @Override
+    public String toString(){
+        return String.format("%d | %s | %s | %s | %d | %d | %b |",identifier,title,date,content,priority,estimatedDuration,completed);
     }
 
 
@@ -122,11 +131,6 @@ public class Task implements Serializable{
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
-    }
-
-
-    public String getInstanceAsDelimitedString(String delimitador) {
-        return String.format(Locale.ENGLISH, "%d"+delimitador+"%s"+delimitador+"%s"+delimitador+"%s"+delimitador+"%d"+delimitador+"%d"+delimitador+"%b",identifier,title,date,content,priority,estimatedDuration,completed);
     }
 
 

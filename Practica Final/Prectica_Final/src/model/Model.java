@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 public class Model {
 
-    private ArrayList<Task> tasks = new ArrayList<>();
     private IExporter exporter;
     private IRepository repository;
     File ficheroSerializado;
@@ -32,7 +31,10 @@ public class Model {
             ObjectInputStream ois = null;
             try {
                 ois = new ObjectInputStream(new FileInputStream(ficheroSerializado));
-                this.tasks = (ArrayList<Task>) ois.readObject();
+                ArrayList<Task> listado = (ArrayList<Task>) ois.readObject();
+                for (Task task : listado) {
+                    repository.addTask(task);
+                }
             } catch (IOException | ClassNotFoundException ex) {
                 // Dejamos el error para la depuración, por el canal err.
                //rellenar
@@ -58,7 +60,8 @@ public class Model {
         ObjectOutputStream oos = null;
         try {
             oos = new ObjectOutputStream(new FileOutputStream(ficheroSerializado));
-            oos.writeObject(tasks);
+            ArrayList<Task> listado = repository.getAllTask();
+            oos.writeObject(listado);
             return true;
         } catch (IOException ex) {
             // Dejamos el error para la depuración, por el canal err.
@@ -79,28 +82,70 @@ public class Model {
 
     public boolean addTarea(int id, String title, String date, String content, int priority, int estimatedDuration,boolean completed) {
         Task tareaActual= new Task(id, priority, estimatedDuration, title, content, date, completed);
-        if(tasks.contains(tareaActual)){
-            return false;
-        }else{
-            tasks.add(tareaActual);
+        if(repository.addTask(tareaActual)!=null){
             return true;
+        }else{
+            return false;
         }
-
     }
 
-    public boolean removeTarea(int id) {
-        for (Task task : tasks) {
+
+    public String showListadoPrioridad() {
+        ArrayList<Task> tasksPrioridad = repository.getAllTask();
+        for(int i=5; i>=0; i--){
+            for (Task task : tasksPrioridad) {
+                if((task.getPriority()==i)&&(!task.isCompleted())){
+                    return task.toString();
+                }
+            }
+        }
+        return null; 
+    }
+
+    public String showListadoCompleto() {
+       ArrayList<Task> listado = repository.getAllTask();
+       for (Task task : listado) {
+            return task.toString();
+        }
+        return null;
+    }
+
+    public int modificarCompleted(int id) {
+        ArrayList<Task> listado = repository.getAllTask();
+        for (Task task : listado) {
             if(task.getIdentifier()==id){
-                tasks.remove(task);
+                if(task.isCompleted()){
+                    Task taskActualizada = new Task(id, task.getPriority(), task.getEstimatedDuration(), task.getTitle(), task.getContent(), task.getDate(), false);
+                    repository.modifyTask(taskActualizada);
+                    return 2;
+                }else{
+                    Task taskActualizada = new Task(id, task.getPriority(), task.getEstimatedDuration(), task.getTitle(), task.getContent(), task.getDate(), true);
+                    repository.modifyTask(taskActualizada);
+                    return 1;
+                }
+            }
+        }
+        return 0;
+        
+    }
+
+    public boolean modificarTarea(int id, String title, String date, String content, int priority, int estimatedDuration, boolean completed) {
+        ArrayList<Task> listado = repository.getAllTask();
+        for (Task task : listado) {
+            if(task.getIdentifier()==id){
+                Task taskActualizada = new Task(id, priority, estimatedDuration, title, content, date, completed);
+                repository.modifyTask(taskActualizada);
                 return true;
             }
         }
         return false;
     }
 
-    public boolean comprobarTarea(int id) {
-        for (Task task : tasks) {
+    public boolean removeTarea(int id) {
+        ArrayList<Task> listado = repository.getAllTask();
+        for (Task task : listado) {
             if(task.getIdentifier()==id){
+                repository.removeTask(task);
                 return true;
             }
         }
@@ -108,20 +153,36 @@ public class Model {
     }
 
     public boolean exportTasksCSV() {
-       return exporter.exportTask(tasks);
-    }
-
-    public boolean importTasksCSV() {
+        ArrayList<Task> listado = repository.getAllTask();
+        return exporter.exportTask(listado);
+     }
+ 
+     public boolean importTasksCSV() {
         //Añadimos las tareas que importamos, no las sustituimos.
         ArrayList<Task> tasksImportadas= exporter.importarTask();
         if(tasksImportadas!=null){
             for (Task taskImportada : tasksImportadas) {
-                if(!tasks.contains(taskImportada)){
-                    tasks.add(taskImportada);
-                }
+                repository.addTask(taskImportada);
             }
             return true;
         }else{
+            return false;
+        }
+     }
+
+    public boolean exportTasksJSON() {
+        ArrayList<Task> listado = repository.getAllTask();
+        return exporter.exportTask(listado);
+    }
+
+    public boolean importTasksJSON() {
+        ArrayList<Task> tasksImportadas= exporter.importarTask();
+        if (tasksImportadas != null) {
+            for (Task taskImportada : tasksImportadas) {
+                repository.addTask(taskImportada);
+            }
+            return true;
+        } else {
             return false;
         }
     }

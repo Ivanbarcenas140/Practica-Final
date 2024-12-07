@@ -1,9 +1,12 @@
 package controller;
 
+import java.util.ArrayList;
+
 import model.CSVExporter;
 import model.IExporter;
 import model.JSONExporter;
 import model.Model;
+import model.Task;
 import view.BaseView;
 
 public class Controller {
@@ -42,33 +45,47 @@ public class Controller {
         return model.removeTarea(id);
     }
 
-    public boolean comprobarTarea(int id) {
-        return model.comprobarTarea(id);
-    }
-
     public boolean setExporter(String formato,String accion) {
         IExporter exporter;
-        switch (formato) {
-            case "json":
-                exporter= new JSONExporter();
-                model.setExporter(exporter);
-                if(accion.equals("e")){
-                    return model.exportTasksJSON();
-                }else{
-                    return model.importTasksJSON();
-                }
-                break;
-            case "csv":
-                exporter = new CSVExporter();
-                model.setExporter(exporter);
-                if(accion.equals("e")){
-                    return model.exportTasksCSV();
-                }else{
-                    return model.importTasksCSV();
-                }
-                break;
-            default:
-                break;
+        if(formato.equals("json")) {
+            exporter= new JSONExporter();
+            model.setExporter(exporter);
+            if(accion.equals("e")){
+                return model.exportTasksJSON();
+            }else{
+                return model.importTasksJSON();
+            }
+        }else{
+            exporter = new CSVExporter();
+            model.setExporter(exporter);
+            if(accion.equals("e")){
+                return model.exportTasksCSV();
+            }else{
+                return model.importTasksCSV();
+            }
         }
+    }
+
+    public String showListadoPrioridad() {
+        return model.showListadoPrioridad();
+    }
+
+    public String showListadoCompleto() {
+        return model.showListadoCompleto();
+    }
+
+    public int modificarCompleted(int id) {
+        int estado = model.modificarCompleted(id);
+        if(estado==1){
+            return 1;
+        }else if(estado == 2){
+            return 2;
+        }else{
+            return 0;
+        }
+    }
+
+    public boolean modificarTarea(int id, String title, String date, String content, int priority,int estimatedDuration, boolean completed) {
+        return model.modificarTarea(id,title,date,content,priority,estimatedDuration,completed);
     }
 }
