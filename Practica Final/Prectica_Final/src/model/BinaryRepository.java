@@ -18,24 +18,32 @@ public class BinaryRepository implements IRepository{
 
     @Override
     public void removeTask(Task t) {
-        for (Task task : tasks) {
-            if(task.getIdentifier()==t.getIdentifier()){
-                tasks.remove(task);
+        try{
+            for (Task task : tasks) {
+                if(task.getIdentifier()==t.getIdentifier()){
+                    tasks.remove(task);
+                }
             }
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 
     @Override
     public void modifyTask(Task t) {
-        for (Task task : tasks) {
-            if(task.getIdentifier()==t.getIdentifier()){
-                task.setTitle(t.getTitle());
-                task.setDate(t.getDate());
-                task.setPriority(t.getPriority());
-                task.setContent(t.getContent());
-                task.setEstimatedDuration(t.getEstimatedDuration());
-                task.setCompleted(t.isCompleted());
+        try{    
+            for (Task task : tasks) {
+                if(task.getIdentifier()==t.getIdentifier()){
+                    task.setTitle(t.getTitle());
+                    task.setDate(t.getDate());
+                    task.setPriority(t.getPriority());
+                    task.setContent(t.getContent());
+                    task.setEstimatedDuration(t.getEstimatedDuration());
+                    task.setCompleted(t.isCompleted());
+                }
             }
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 

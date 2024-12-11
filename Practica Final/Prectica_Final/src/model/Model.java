@@ -19,7 +19,7 @@ public class Model {
 
     public Model(IRepository r){
         this.repository=r;
-        ficheroSerializado = Paths.get(System.getProperty("user.home"), "Desktop", "model.bin").toFile();
+        ficheroSerializado = Paths.get(System.getProperty("user.home"), "Desktop", "task.bin").toFile();
     }
 
     public void setExporter(IExporter e){
@@ -36,16 +36,14 @@ public class Model {
                     repository.addTask(task);
                 }
             } catch (IOException | ClassNotFoundException ex) {
-                // Dejamos el error para la depuración, por el canal err.
-               //rellenar
+                System.err.println("Error durante la deserializacion: " + ex.getMessage());
                 return false;
             } finally {
                 if (ois != null) {
                     try {
                         ois.close();
                     } catch (IOException ex) {
-                        // Dejamos el error para la depuración, por el canal err.
-                        //rellenar
+                        System.err.println("Error durante la deserializacion: " + ex.getMessage());
                         return false;
                     }
                 }
@@ -64,16 +62,14 @@ public class Model {
             oos.writeObject(listado);
             return true;
         } catch (IOException ex) {
-            // Dejamos el error para la depuración, por el canal err.
-            //rellenar
+            System.err.println("Error durante la serialización: " + ex.getMessage());
             return false;
         } finally {
             if (oos != null) {
                 try {
                     oos.close();
                 } catch (IOException ex) {
-                    // Dejamos el error para la depuración, por el canal err.
-                    //rellenar
+                    System.err.println("Error al cerrar el flujo: " + ex.getMessage());
                     return false;
                 }
             }
@@ -89,25 +85,28 @@ public class Model {
         }
     }
 
-
-    public String showListadoPrioridad() {
-        ArrayList<Task> tasksPrioridad = repository.getAllTask();
+    public ArrayList<String> getListadoPrioridad() {
+        ArrayList<Task> listado = repository.getAllTask();
+        ArrayList<String> listadoPrioridad = new ArrayList<>();
         for(int i=5; i>=0; i--){
-            for (Task task : tasksPrioridad) {
+            for (Task task : listado) {
                 if((task.getPriority()==i)&&(!task.isCompleted())){
-                    return task.toString();
+                    String taskActual = task.toString();
+                    listadoPrioridad.add(taskActual);
                 }
             }
         }
-        return null; 
+        return listadoPrioridad;
     }
 
-    public String showListadoCompleto() {
+    public ArrayList<String> showListadoCompleto() {
        ArrayList<Task> listado = repository.getAllTask();
+       ArrayList<String> listadoStrings = new ArrayList<>();
        for (Task task : listado) {
-            return task.toString();
+            String taskActual = task.toString();
+            listadoStrings.add(taskActual);
         }
-        return null;
+        return listadoStrings;
     }
 
     public int modificarCompleted(int id) {
@@ -125,8 +124,7 @@ public class Model {
                 }
             }
         }
-        return 0;
-        
+        return 0;  
     }
 
     public boolean modificarTarea(int id, String title, String date, String content, int priority, int estimatedDuration, boolean completed) {
@@ -158,7 +156,6 @@ public class Model {
      }
  
      public boolean importTasksCSV() {
-        //Añadimos las tareas que importamos, no las sustituimos.
         ArrayList<Task> tasksImportadas= exporter.importarTask();
         if(tasksImportadas!=null){
             for (Task taskImportada : tasksImportadas) {
@@ -186,6 +183,8 @@ public class Model {
             return false;
         }
     }
+
+    
 
 
 

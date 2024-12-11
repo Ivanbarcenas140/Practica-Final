@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 public class JSONExporter implements IExporter{
 
     Path ruta = Paths.get(System.getProperty("user.home"), "Desktop", "task.json");
@@ -24,8 +27,6 @@ public class JSONExporter implements IExporter{
             Type tipoDeLista = new TypeToken<ArrayList<Task>>() {}.getType();
             return gson.fromJson(json, tipoDeLista);
         } catch (IOException ex) {
-            // TODO veremos como cambiar esto cuando tratemos excepciones
-            // de momento retornaremos null si hay algún problema
             System.err.println("Error:" + ex.getMessage());
             return null;
         }
@@ -42,8 +43,6 @@ public class JSONExporter implements IExporter{
             Files.write(f.toPath(), json.getBytes(StandardCharsets.UTF_8));
             return true;
         } catch (IOException ex) {
-            // TODO veremos como cambiar esto cuando tratemos excepciones
-            // de momento retornaremos null si hay algún problema
             System.err.println("Error:" + ex.getMessage());
             return false;
         }

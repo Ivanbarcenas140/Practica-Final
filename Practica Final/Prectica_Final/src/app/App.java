@@ -14,7 +14,7 @@ public class App {
         BaseView view;
 
         if(args.length == 4){
-            repository = new NotionRepository();
+            repository = new NotionRepository(args[2],args[3]);
             view = new InteractiveView();
         }else{
             repository= new BinaryRepository();
@@ -25,5 +25,6 @@ public class App {
         Controller c = new Controller(model,view);
 
         c.start();
+        c.end();
     }
 }

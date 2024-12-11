@@ -2,11 +2,17 @@ package view;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import controller.Controller;
 
 import model.Task;
 
 public class InteractiveView extends BaseView{
     Scanner scan = new Scanner(System.in);
+    Controller controller;
+
+    public void setController( Controller c){
+        this.controller=c;
+    }
 
     @Override
     public void init() {
@@ -47,7 +53,7 @@ public class InteractiveView extends BaseView{
             }
 
 
-        }while(opcion!=8);
+        }while(opcion!=5);
 
         
     }
@@ -65,46 +71,54 @@ public class InteractiveView extends BaseView{
 
     @Override
     public void end() {
-        
+        showMessage("Saliendo...");
     }
 
     private void addTarea() {
-        System.out.printf("Introduzca el identificador unico de la tarea.");
+        System.out.printf("Introduzca el identificador unico de la tarea: ");
         int id = scan.nextInt();
         scan.nextLine();
 
-        System.out.printf("Introduzca el titulo de la tarea.");
+        System.out.printf("Introduzca el titulo de la tarea: ");
         String title = scan.nextLine();
 
         System.out.println("Introduzca la fecha de la tarea.");
-        System.out.printf("Introduzca el anio.");
+        System.out.printf("Introduzca el anio: ");
         int year= scan.nextInt();
         scan.nextLine();
-        System.out.printf("Introduzca el mes.");
+        System.out.printf("Introduzca el mes: ");
         int mes= scan.nextInt();
         scan.nextLine();
-        System.out.printf("Introduzca el dia.");
+        System.out.printf("Introduzca el dia: ");
         int dia= scan.nextInt();
         scan.nextLine();
         String date= String.format("%2d/%2d/%4d",dia,mes,year);
 
-        System.out.printf("Introduzca el contenido de la tarea.");
+        System.out.printf("Introduzca el contenido de la tarea: ");
         String content = scan.nextLine();
 
         int priority;
         do{
-            System.out.printf("Introduzca la prioridad de la tarea(1-5)(5 maxima prioridad).");
+            System.out.printf("Introduzca la prioridad de la tarea(1-5)(5 maxima prioridad): ");
             priority = scan.nextInt();
             scan.nextLine();
         }while((priority<1) || (priority>5));
         
-        System.out.printf("Introduzca la duracion estimada de la tarea en minutos.");
+        System.out.printf("Introduzca la duracion estimada de la tarea en minutos: ");
         int estimatedDuration = scan.nextInt();
         scan.nextLine();
 
-        System.out.printf("Introduzca si la tarea esta completada.");
-        boolean completed = scan.nextBoolean();
-        scan.nextLine();
+        String c ;
+        boolean completed=false;
+        do{
+            System.out.printf("Introduzca si la tarea esta completada(y/n): ");
+            c = scan.nextLine();
+            if(c.equals("y")){
+                completed = true;
+            }else if(c.equals("n")){
+                completed = false;
+            }
+        }while((!c.equals("y"))&&(!c.equals("n")));
 
         if(controller.addTarea(id,title,date,content,priority,estimatedDuration,completed)){
             showMessage("Se ha añadido la tarea correctamente.");
@@ -145,14 +159,16 @@ public class InteractiveView extends BaseView{
     }
 
     private void showListadoPrioridad() {
-        while(controller.showListadoPrioridad()!=null){
-            System.out.println(controller.showListadoPrioridad());
-        }
+        ArrayList<String> listado = controller.getListadoPrioridad();
+        for (String taskActual : listado) {
+            System.out.println(taskActual);
+        }  
     }
 
     private void showListadoCompleto() {
-        while(controller.showListadoCompleto()!=null){
-            System.out.println(controller.showListadoCompleto());
+        ArrayList<String> listado = controller.showListadoCompleto();
+        for (String taskActual : listado) {
+            System.out.println(taskActual);
         }    
     }
     
@@ -189,7 +205,7 @@ public class InteractiveView extends BaseView{
                     System.out.println("ERROR. OPCION NO VALIDA");
                 break;
             }
-        }while(opcion!=3);
+        }while(opcion!=4);
     }
 
     private void modificarCompleted() {
@@ -211,38 +227,48 @@ public class InteractiveView extends BaseView{
         int id = scan.nextInt();
         scan.nextLine();
 
-        System.out.printf("Introduzca el nuevo titulo de la tarea.");
+        System.out.printf("Introduzca el nuevo titulo de la tarea: ");
         String title = scan.nextLine();
 
         System.out.println("Introduzca la fecha de la tarea.");
-        System.out.printf("Introduzca el anio.");
+        System.out.printf("Introduzca el anio: ");
         int year= scan.nextInt();
         scan.nextLine();
-        System.out.printf("Introduzca el mes.");
+        System.out.printf("Introduzca el mes: ");
         int mes= scan.nextInt();
         scan.nextLine();
-        System.out.printf("Introduzca el dia.");
+        System.out.printf("Introduzca el dia: ");
         int dia= scan.nextInt();
         scan.nextLine();
         String date= String.format("%2d/%2d/%4d",dia,mes,year);
 
-        System.out.printf("Introduzca el nuevo contenido de la tarea.");
+        System.out.printf("Introduzca el nuevo contenido de la tarea: ");
         String content = scan.nextLine();
 
         int priority;
         do{
-            System.out.printf("Introduzca la nueva prioridad de la tarea(1-5)(5 maxima prioridad).");
+            System.out.printf("Introduzca la nueva prioridad de la tarea(1-5)(5 maxima prioridad): ");
             priority = scan.nextInt();
             scan.nextLine();
         }while((priority<1) || (priority>5));
         
-        System.out.printf("Introduzca la nueva duracion estimada de la tarea en minutos.");
+        System.out.printf("Introduzca la nueva duracion estimada de la tarea en minutos: ");
         int estimatedDuration = scan.nextInt();
         scan.nextLine();
 
-        System.out.printf("Introduzca si la tarea esta completada.");
-        boolean completed = scan.nextBoolean();
-        scan.nextLine();
+
+        String c ;
+        boolean completed=false;
+        do{
+            System.out.printf("Introduzca si la tarea esta completada(y/n): ");
+            c = scan.nextLine();
+            if(c.equals("y")){
+                completed = true;
+            }else if(c.equals("n")){
+                completed = false;
+            }
+        }while((!c.equals("y"))&&(!c.equals("n")));
+
 
         if(controller.modificarTarea(id,title,date,content,priority,estimatedDuration,completed)){
             showMessage("Tarea modificada correctamente.");

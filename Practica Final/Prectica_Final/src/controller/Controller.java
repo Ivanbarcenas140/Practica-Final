@@ -7,6 +7,7 @@ import model.IExporter;
 import model.JSONExporter;
 import model.Model;
 import model.Task;
+import model.ExporterFactory;
 import view.BaseView;
 
 public class Controller {
@@ -17,6 +18,8 @@ public class Controller {
     public Controller(Model m,BaseView v){
         this.model=m;
         this.view=v;
+
+        v.setController(this);
     }
 
     public void start(){
@@ -30,10 +33,11 @@ public class Controller {
 
     public void end(){
         if(model.saveData()){
-            view.showMessage("Se han guardado los datos correctamente.Saliendo...");
+            view.showMessage("Se han guardado los datos correctamente.");
         }else{
-            view.showErrorMessage("No se ha podido guardar el nuevo estado.Saliendo...");
+            view.showErrorMessage("No se ha podido guardar el nuevo estado.");
         }
+        view.end();
     }
 
     public boolean addTarea(int id, String title, String date, String content, int priority, int estimatedDuration,boolean completed) {
@@ -47,8 +51,9 @@ public class Controller {
 
     public boolean setExporter(String formato,String accion) {
         IExporter exporter;
+        ExporterFactory factory = new ExporterFactory();
         if(formato.equals("json")) {
-            exporter= new JSONExporter();
+            exporter= factory.getExporter(formato);
             model.setExporter(exporter);
             if(accion.equals("e")){
                 return model.exportTasksJSON();
@@ -56,7 +61,7 @@ public class Controller {
                 return model.importTasksJSON();
             }
         }else{
-            exporter = new CSVExporter();
+            exporter= factory.getExporter(formato);
             model.setExporter(exporter);
             if(accion.equals("e")){
                 return model.exportTasksCSV();
@@ -66,11 +71,12 @@ public class Controller {
         }
     }
 
-    public String showListadoPrioridad() {
-        return model.showListadoPrioridad();
+    
+    public ArrayList<String> getListadoPrioridad() {
+        return model.getListadoPrioridad();
     }
 
-    public String showListadoCompleto() {
+    public ArrayList<String> showListadoCompleto() {
         return model.showListadoCompleto();
     }
 
@@ -88,4 +94,6 @@ public class Controller {
     public boolean modificarTarea(int id, String title, String date, String content, int priority,int estimatedDuration, boolean completed) {
         return model.modificarTarea(id,title,date,content,priority,estimatedDuration,completed);
     }
+
+    
 }

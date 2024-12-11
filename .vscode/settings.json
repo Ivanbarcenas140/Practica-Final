@@ -1,0 +1,9 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "Practica Final/Prectica_Final/lib/Bibliotecas para el proyecto-20241130/biblioteca11.jar",
+        "Practica Final/Prectica_Final/lib/Bibliotecas para el proyecto-20241130/gson-2.10.1.jar",
+        "Practica Final/Prectica_Final/lib/Bibliotecas para el proyecto-20241130/jadapter-for-native-tts-0.12.0.jar",
+        "Practica Final/Prectica_Final/lib/Bibliotecas para el proyecto-20241130/notion-sdk-jvm-core-1.11.1.jar"
+    ]
+}
